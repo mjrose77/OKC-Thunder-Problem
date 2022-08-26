@@ -1,0 +1,93 @@
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+Setup Libraries and Data
+```{r}
+library(tidyverse)
+df <- read.csv(file = "shots_data.csv")
+
+```
+
+Create a dataframe with zoned shots
+
+```{r}
+df <- df %>% 
+  group_by(team)%>%
+  mutate(Zone = case_when(
+                abs(x) > 22 & y <=7.8 ~ "C3",
+                x^2 + y^2 > 23.75^2 & y > 7.8 ~ "NC3",
+                TRUE ~ "2PT"
+                ) 
+  )
+
+```
+
+Team A Shots
+
+```{r}
+dfA <- df %>%
+  filter(team == "Team A")
+
+dfA
+```
+
+Team A Shot distribution:
+
+```{r}
+ShotDistA <- dfA %>%
+  group_by(Zone) %>%
+  summarize(ShotCount = n()) %>%
+  mutate("Shot Distribution" = ShotCount/ sum(ShotCount))
+
+ShotDistA
+
+```
+
+Team A eFG
+
+```{r}
+eFGA <- dfA %>%
+  group_by(Zone)%>%
+  summarize(eFG = (sum(fgmade)+(.5*sum(fgmade)))/n())
+eFGA
+```
+
+
+
+Team B Shots
+
+```{r}
+dfB <- df %>%
+  filter(team == "Team B")
+dfB
+```
+
+Shot Distribution of B
+
+```{r}
+ShotDistB <- dfB %>%
+  group_by(Zone) %>%
+  summarize(ShotCount = n()) %>%
+  mutate("Shot Distribution" = ShotCount/ sum(ShotCount))
+
+ShotDistB
+```
+
+EFG Team B
+
+```{r}
+eFGB <- dfB %>%
+  group_by(Zone)%>%
+  summarize(eFG = (sum(fgmade)+(.5*sum(fgmade)))/n())
+eFGB
+```
+
+
+
+
+
+
+
+
+
